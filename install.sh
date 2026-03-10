@@ -3,6 +3,37 @@ set -e
 
 REPO="$(cd "$(dirname "$0")" && pwd)"
 
+# ── Install required packages ─────────────────────────────────────────────────
+install_packages() {
+  local missing=()
+
+  command -v tmux  &>/dev/null || missing+=(tmux)
+  command -v nvim  &>/dev/null || missing+=(neovim)
+
+  if [ ${#missing[@]} -eq 0 ]; then
+    echo "tmux and neovim already installed — skipping package install"
+    return
+  fi
+
+  echo "Installing missing packages: ${missing[*]}"
+
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get update -qq && sudo apt-get install -y "${missing[@]}"
+  elif command -v dnf &>/dev/null; then
+    sudo dnf install -y "${missing[@]}"
+  elif command -v pacman &>/dev/null; then
+    sudo pacman -Sy --noconfirm "${missing[@]}"
+  elif command -v brew &>/dev/null; then
+    brew install "${missing[@]}"
+  else
+    echo "ERROR: Cannot detect package manager. Install manually: ${missing[*]}" >&2
+    exit 1
+  fi
+}
+
+install_packages
+
+# ── Dotfile symlinks ──────────────────────────────────────────────────────────
 ln -sf "$REPO/.vimrc" ~/.vimrc
 ln -sf "$REPO/.bash_aliases" ~/.bash_aliases
 echo "Symlinked .bash_aliases"
@@ -44,6 +75,10 @@ for RC in ~/.bashrc ~/.zshrc; do
     echo "Added alias vim='nvim' to $RC"
   fi
 done
+
+# ── Tmux config ───────────────────────────────────────────────────────────────
+ln -sf "$REPO/tmux/.tmux.conf" ~/.tmux.conf
+echo "Symlinked .tmux.conf"
 
 echo "Symlinks created. Open nvim to let lazy.nvim install plugins."
 
