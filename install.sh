@@ -46,3 +46,23 @@ for RC in ~/.bashrc ~/.zshrc; do
 done
 
 echo "Symlinks created. Open nvim to let lazy.nvim install plugins."
+
+# Source the appropriate RC file to activate aliases in the current shell.
+# This only has an effect when the script is itself sourced (. install.sh).
+# When run as a subprocess, print a reminder instead.
+if [[ -n "$ZSH_VERSION" ]]; then
+  RC=~/.zshrc
+elif [[ -n "$BASH_VERSION" ]]; then
+  RC=~/.bashrc
+else
+  RC=""
+fi
+
+if [[ -n "$RC" && -f "$RC" ]]; then
+  # shellcheck source=/dev/null
+  . "$RC"
+  echo "Sourced $RC — aliases are active in this shell."
+  echo "(If you ran this as a subprocess, run:  source $RC)"
+else
+  echo "Run 'source ~/.bashrc' or 'source ~/.zshrc' to activate aliases in your current shell."
+fi
