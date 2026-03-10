@@ -76,6 +76,11 @@ for RC in ~/.bashrc ~/.zshrc; do
   fi
 done
 
+# ── Global gitignore ─────────────────────────────────────────────────────────
+ln -sf "$REPO/.gitignore_global" ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global
+echo "Symlinked .gitignore_global and set core.excludesfile"
+
 # ── Tmux config ───────────────────────────────────────────────────────────────
 ln -sf "$REPO/tmux/.tmux.conf" ~/.tmux.conf
 echo "Symlinked .tmux.conf"
