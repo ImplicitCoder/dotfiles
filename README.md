@@ -66,7 +66,7 @@ Key mappings (leader is `,`):
 
 ```bash
 # 1. Clone this repo
-git clone https://github.com/YOUR_USER/dotfiles.git ~/software/dotfiles
+git clone https://github.com/implicitcoder/dotfiles.git ~/software/dotfiles
 
 # 2. Run the install script
 bash ~/software/dotfiles/install.sh

@@ -16,4 +16,11 @@ if [ -d "$LUA_TARGET" ] && [ ! -L "$LUA_TARGET" ]; then
 fi
 ln -sf "$REPO/nvim/lua" "$LUA_TARGET"
 
+for RC in ~/.bashrc ~/.zshrc; do
+  if [ -f "$RC" ] && ! grep -q "alias vim=" "$RC"; then
+    echo "alias vim='nvim'" >> "$RC"
+    echo "Added alias vim='nvim' to $RC"
+  fi
+done
+
 echo "Symlinks created. Open nvim to let lazy.nvim install plugins."
