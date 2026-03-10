@@ -7,6 +7,7 @@ set nocompatible
 set encoding=utf-8
 set history=1000
 set undolevels=1000
+set undofile                    " persist undo history across sessions
 set autoread                    " reload file if changed outside vim
 silent! colorscheme monokai
 
