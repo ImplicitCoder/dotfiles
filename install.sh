@@ -4,20 +4,40 @@ set -e
 REPO="$(cd "$(dirname "$0")" && pwd)"
 
 # ── Install required packages ─────────────────────────────────────────────────
+# Neovim 0.10+ is required by the treesitter plugin config in this repo.
+# Ubuntu/Debian ship an outdated Neovim in their default repos, so on those
+# systems we add the neovim-ppa/unstable PPA before installing.
 install_packages() {
   local missing=()
 
-  command -v tmux  &>/dev/null || missing+=(tmux)
-  command -v nvim  &>/dev/null || missing+=(neovim)
+  command -v tmux &>/dev/null || missing+=(tmux)
+
+  # Check nvim version: require at least 0.10
+  if command -v nvim &>/dev/null; then
+    local nvim_minor
+    nvim_minor=$(nvim --version | awk 'NR==1{split($2,a,"."); print a[2]+0}')
+    if [ "$nvim_minor" -lt 10 ]; then
+      echo "Warning: Neovim $(nvim --version | awk 'NR==1{print $2}') is too old — need 0.10+."
+      missing+=(neovim)
+    fi
+  else
+    missing+=(neovim)
+  fi
 
   if [ ${#missing[@]} -eq 0 ]; then
-    echo "tmux and neovim already installed — skipping package install"
+    echo "tmux and neovim (0.10+) already installed — skipping package install"
     return
   fi
 
   echo "Installing missing packages: ${missing[*]}"
 
   if command -v apt-get &>/dev/null; then
+    # The default Ubuntu/Debian neovim package is typically 0.9.x or older.
+    # The neovim-ppa/unstable PPA provides current stable builds (0.10+).
+    if [[ " ${missing[*]} " == *" neovim "* ]]; then
+      echo "Adding neovim-ppa/unstable PPA for an up-to-date Neovim build..."
+      sudo add-apt-repository -y ppa:neovim-ppa/unstable
+    fi
     sudo apt-get update -qq && sudo apt-get install -y "${missing[@]}"
   elif command -v dnf &>/dev/null; then
     sudo dnf install -y "${missing[@]}"
