@@ -7,6 +7,7 @@ Personal editor config files, managed as symlinks so the originals live here und
 ```
 dotfiles/
 ├── .vimrc              → ~/.vimrc
+├── .bash_aliases       → ~/.bash_aliases
 ├── install.sh          → run once on a new machine
 └── nvim/
     ├── init.lua        → ~/.config/nvim/init.lua
@@ -18,6 +19,32 @@ dotfiles/
             ├── colorscheme.lua
             └── neo-tree.lua
 ```
+
+### `.bash_aliases` — shell aliases
+
+Shared aliases sourced by both `.bashrc` and `.zshrc`. Covers:
+
+| Alias | Expands to | Purpose |
+|---|---|---|
+| `la` | `ls -laht` | Long list, sorted by time |
+| `ll` | `ls -lh` | Long list, human sizes |
+| `..` / `...` / `....` | `cd ..` etc. | Quick directory ascent |
+| `cp`, `mv`, `rm` | with `-i` | Prompt before overwrite/delete |
+| `df`, `du`, `free` | with `-h` | Human-readable sizes |
+| `grep` / `egrep` / `fgrep` | with `--color=auto` | Coloured matches |
+| `gs`, `ga`, `gc`, `gp`, `gpl` | `git status/add/commit/push/pull` | Git shortcuts |
+| `gl` | `git log --oneline --graph --decorate` | Pretty git log |
+| `gd`, `gco`, `gb` | `git diff/checkout/branch` | More git shortcuts |
+| `ports` | `ss -tulanp` | Open ports |
+| `myip` | `curl -s ifconfig.me` | External IP |
+| `path` | `echo $PATH \| tr ":" "\n"` | PATH, one entry per line |
+| `reload` | `source ~/.bashrc` | Reload shell config |
+| `mkd` | `mkdir -p` | Create directory tree |
+| `which` | `type -a` | All matches, not just first |
+
+The install script checks whether your `.bashrc` / `.zshrc` already source `~/.bash_aliases`. If not, it warns you and offers to append the sourcing block automatically.
+
+---
 
 ### `.vimrc` — shared base config
 
@@ -83,11 +110,15 @@ The install script creates symlinks from the standard locations to the files in 
 REPO=~/software/dotfiles
 
 ln -sf "$REPO/.vimrc" ~/.vimrc
+ln -sf "$REPO/.bash_aliases" ~/.bash_aliases
 
 mkdir -p ~/.config/nvim
 ln -sf "$REPO/nvim/init.lua"        ~/.config/nvim/init.lua
 ln -sf "$REPO/nvim/lazy-lock.json"  ~/.config/nvim/lazy-lock.json
 ln -sf "$REPO/nvim/lua"             ~/.config/nvim/lua
+
+# Ensure your .bashrc / .zshrc sources it (add if missing):
+# [ -f ~/.bash_aliases ] && . ~/.bash_aliases
 ```
 
 ---
