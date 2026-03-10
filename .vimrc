@@ -102,6 +102,13 @@ nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
 
 " ============================================
+"  Custom commands
+" ============================================
+
+command! -bang Q  q<bang>
+command! -bang QA qa<bang>
+
+" ============================================
 "  File type niceties
 " ============================================
 filetype plugin indent on
