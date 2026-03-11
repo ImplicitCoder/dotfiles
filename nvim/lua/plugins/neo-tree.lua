@@ -24,7 +24,9 @@ return {
       },
     })
 
-    -- Close neo-tree when quitting the last real window
+    -- Close neo-tree when quitting the last real window, or when :qa is run
+    -- from inside neo-tree (its unlisted buffer is skipped by :qa otherwise,
+    -- leaving it as a stray window after all file windows close).
     vim.api.nvim_create_autocmd("QuitPre", {
       callback = function()
         local wins = vim.api.nvim_list_wins()
@@ -36,7 +38,8 @@ return {
             real_wins = real_wins + 1
           end
         end
-        if real_wins == 1 then
+        local in_neotree = vim.bo.filetype == "neo-tree"
+        if real_wins <= 1 or in_neotree then
           vim.cmd("Neotree close")
         end
       end,
