@@ -7,11 +7,13 @@ return {
     "L3MON4D3/LuaSnip",          -- snippet engine (required by nvim-cmp)
     "saadparwaiz1/cmp_luasnip",  -- luasnip source for nvim-cmp
   },
-  config = function()
+  -- Using opts (function form) instead of config so desktop plugins can
+  -- extend the sources table (e.g. inject nvim_lsp) via their own opts spec.
+  opts = function()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
 
-    cmp.setup({
+    return {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
@@ -36,15 +38,15 @@ return {
             fallback()
           end
         end, { "i", "s" }),
-        ["<CR>"]    = cmp.mapping.confirm({ select = false }),
+        ["<CR>"]      = cmp.mapping.confirm({ select = false }),
         ["<C-Space>"] = cmp.mapping.complete(),
-        ["<C-e>"]   = cmp.mapping.abort(),
+        ["<C-e>"]     = cmp.mapping.abort(),
       }),
       sources = cmp.config.sources({
         { name = "luasnip" },
         { name = "buffer" },
         { name = "path" },
       }),
-    })
+    }
   end,
 }

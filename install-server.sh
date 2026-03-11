@@ -81,13 +81,25 @@ echo ""
 mkdir -p ~/.config/nvim
 ln -sf "$REPO/nvim/init.lua"        ~/.config/nvim/init.lua
 ln -sf "$REPO/nvim/lazy-lock.json"  ~/.config/nvim/lazy-lock.json
-LUA_TARGET=~/.config/nvim/lua
-if [ -d "$LUA_TARGET" ] && [ ! -L "$LUA_TARGET" ]; then
-  BACKUP="${LUA_TARGET}.bak.$(date +%Y%m%d%H%M%S)"
-  mv "$LUA_TARGET" "$BACKUP"
-  echo "Warning: existing lua/ directory moved to $BACKUP"
+# Symlink lua subdirs individually rather than the whole lua/ dir.
+# This lets the desktop install inject a desktop_plugins/ subdir alongside
+# without conflicting with this symlink.
+# If a previous install left lua/ as a whole-dir symlink, remove it first
+# so we can replace it with a real directory.
+if [ -L ~/.config/nvim/lua ]; then
+  rm ~/.config/nvim/lua
+  echo "Removed old lua/ symlink (will use per-subdir symlinks instead)"
 fi
-ln -sf "$REPO/nvim/lua" "$LUA_TARGET"
+mkdir -p ~/.config/nvim/lua
+for subdir in config plugins; do
+  LUA_TARGET=~/.config/nvim/lua/$subdir
+  if [ -d "$LUA_TARGET" ] && [ ! -L "$LUA_TARGET" ]; then
+    BACKUP="${LUA_TARGET}.bak.$(date +%Y%m%d%H%M%S)"
+    mv "$LUA_TARGET" "$BACKUP"
+    echo "Warning: existing lua/$subdir/ moved to $BACKUP"
+  fi
+  ln -sf "$REPO/nvim/lua/$subdir" "$LUA_TARGET"
+done
 
 for RC in ~/.bashrc ~/.zshrc; do
   if [ -f "$RC" ] && ! grep -q "alias vim=" "$RC"; then
@@ -105,7 +117,7 @@ echo "Symlinked .gitignore_global and set core.excludesfile"
 ln -sf "$REPO/tmux/.tmux.conf" ~/.tmux.conf
 echo "Symlinked .tmux.conf"
 
-echo "Symlinks created. Open nvim to let lazy.nvim install plugins."
+echo "Server symlinks created. Open nvim to let lazy.nvim install plugins."
 
 # Source the appropriate RC file to activate aliases in the current shell.
 # This only has an effect when the script is itself sourced (. install.sh).
