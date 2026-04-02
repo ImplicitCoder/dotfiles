@@ -120,3 +120,6 @@ autocmd FileType sh   setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 " Strip trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
+
+" Save on focus lost (switching to another window/app)
+autocmd FocusLost * silent! w
