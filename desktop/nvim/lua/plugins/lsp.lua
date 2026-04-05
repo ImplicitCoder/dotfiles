@@ -81,7 +81,7 @@ return {
           vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action,    opts)
           vim.keymap.set("n", "[d",         vim.diagnostic.goto_prev,   opts)
           vim.keymap.set("n", "]d",         vim.diagnostic.goto_next,   opts)
-          vim.keymap.set("n", "<leader>d",  vim.diagnostic.open_float,  opts)
+          vim.keymap.set("n", "<leader>d",  function() vim.diagnostic.open_float(nil, { focus = true }) end, opts)
         end,
       })
     end,

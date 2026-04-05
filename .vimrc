@@ -13,6 +13,8 @@ silent! colorscheme monokai
 
 " --- UI ---
 set number                      " line numbers
+set numberwidth=3               " min width for line number column (2 digits + 1 space)
+set signcolumn=yes:1            " always show exactly 1 sign column to prevent layout jump
 set scrolloff=8                 " keep 8 lines above/below cursor
 set sidescrolloff=8
 set wrap                        " wrap long lines
@@ -52,13 +54,19 @@ let mapleader = ","             " space as leader key
 " jj to exit insert mode
 inoremap jj <Esc>
 
-" Move lines up/down in normal mode with Alt+Up/Down
+" Move lines up/down in normal mode with Alt+Up/Down or plain Up/Down
 nnoremap <A-Up>   :m .-2<CR>==
 nnoremap <A-Down> :m .+1<CR>==
+nnoremap <Up>     :m .-2<CR>==
+nnoremap <Down>   :m .+1<CR>==
 
 " Move lines up/down in visual mode
 vnoremap <A-Up>   :m '<-2<CR>gv=gv
 vnoremap <A-Down> :m '>+1<CR>gv=gv
+
+" Toggle comment (normal: current line, visual: selection)
+nnoremap <leader>c gcc
+vnoremap <leader>c gc
 
 " Clear search highlight with Enter
 nnoremap <CR> :nohlsearch<CR>
