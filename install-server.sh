@@ -55,6 +55,7 @@ install_packages
 
 # ── Dotfile symlinks ──────────────────────────────────────────────────────────
 ln -sf "$REPO/.vimrc" ~/.vimrc
+ln -sf "$REPO/.zshrc" ~/.zshrc
 ln -sf "$REPO/.bash_aliases" ~/.bash_aliases
 echo "Symlinked .bash_aliases"
 
